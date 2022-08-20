@@ -16,17 +16,17 @@ kpi1, kpi2, kpi3 = st.beta_columns(3)
 
 with kpi1:
     st.markdown("**First KPI**")
-    number1 = 111 
+    number1 = 10 
     st.markdown(f"<h1 style='text-align: center; color: red;'>{number1}</h1>", unsafe_allow_html=True)
 
 with kpi2:
     st.markdown("**Second KPI**")
-    number2 = 222 
+    number2 = 233
     st.markdown(f"<h1 style='text-align: center; color: red;'>{number2}</h1>", unsafe_allow_html=True)
 
 with kpi3:
     st.markdown("**Third KPI**")
-    number3 = 333 
+    number3 = 850
     st.markdown(f"<h1 style='text-align: center; color: red;'>{number3}</h1>", unsafe_allow_html=True)
 
 st.markdown("<hr/>",unsafe_allow_html=True)
