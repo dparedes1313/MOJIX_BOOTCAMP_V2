@@ -1,78 +1,73 @@
-import streamlit as st
-import pandas as pd
-import numpy as np 
+import streamlit as st # web development
+import numpy as np # np mean, np random 
+import pandas as pd # read csv, df manipulation
+import time # to simulate a real time data, time loop 
+import plotly.express as px # interactive charts 
+
+
+# read csv from a github repo
+df = pd.read_csv("https://raw.githubusercontent.com/Lexie88rus/bank-marketing-analysis/master/bank.csv")
+
 
 st.set_page_config(
-    page_title = 'Streamlit Sample Dashboard Template',
+    page_title = 'Real-Time Data Science Dashboard',
     page_icon = '✅',
     layout = 'wide'
 )
 
-st.markdown("## KPI First Row")
+# dashboard title
 
-# kpi 1 
+st.title("Real-Time / Live Data Science Dashboard")
 
-kpi1, kpi2, kpi3 = st.beta_columns(3)
+# top-level filters 
 
-with kpi1:
-    st.markdown("**First KPI**")
-    number1 = 10 
-    st.markdown(f"<h1 style='text-align: center; color: red;'>{number1}</h1>", unsafe_allow_html=True)
-
-with kpi2:
-    st.markdown("**Second KPI**")
-    number2 = 233
-    st.markdown(f"<h1 style='text-align: center; color: red;'>{number2}</h1>", unsafe_allow_html=True)
-
-with kpi3:
-    st.markdown("**Third KPI**")
-    number3 = 850
-    st.markdown(f"<h1 style='text-align: center; color: red;'>{number3}</h1>", unsafe_allow_html=True)
-
-st.markdown("<hr/>",unsafe_allow_html=True)
+job_filter = st.selectbox("Select the Job", pd.unique(df['job']))
 
 
-st.markdown("## KPI Second Row")
+# creating a single-element container.
+placeholder = st.empty()
 
-# kpi 1 
+# dataframe filter 
 
-kpi01, kpi02, kpi03, kpi04, kpi05 = st.beta_columns(5)
+df = df[df['job']==job_filter]
 
-with kpi01:
-    st.markdown("**Another 1st KPI**")
-    number1 = 111 
-    st.markdown(f"<h1 style='text-align: center; color: yellow;'>{number1}</h1>", unsafe_allow_html=True)
+# near real-time / live feed simulation 
 
-with kpi02:
-    st.markdown("**Another 1st KPI**")
-    number1 = 222 
-    st.markdown(f"<h1 style='text-align: center; color: yellow;'>{number1}</h1>", unsafe_allow_html=True)
+for seconds in range(200):
+#while True: 
+    
+    df['age_new'] = df['age'] * np.random.choice(range(1,5))
+    df['balance_new'] = df['balance'] * np.random.choice(range(1,5))
 
-with kpi03:
-    st.markdown("**Another 1st KPI**")
-    number1 = 555 
-    st.markdown(f"<h1 style='text-align: center; color: yellow;'>{number1}</h1>", unsafe_allow_html=True)
+    # creating KPIs 
+    avg_age = np.mean(df['age_new']) 
 
-with kpi04:
-    st.markdown("**Another 1st KPI**")
-    number1 = 333 
-    st.markdown(f"<h1 style='text-align: center; color: yellow;'>{number1}</h1>", unsafe_allow_html=True)
+    count_married = int(df[(df["marital"]=='married')]['marital'].count() + np.random.choice(range(1,30)))
+    
+    balance = np.mean(df['balance_new'])
 
-with kpi05:
-    st.markdown("**Another 1st KPI**")
-    number1 = 444 
-    st.markdown(f"<h1 style='text-align: center; color: yellow;'>{number1}</h1>", unsafe_allow_html=True)
+    with placeholder.container():
+        # create three columns
+        kpi1, kpi2, kpi3 = st.columns(3)
 
-st.markdown("<hr/>",unsafe_allow_html=True)
+        # fill in those three columns with respective metrics or KPIs 
+        kpi1.metric(label="Age ⏳", value=round(avg_age), delta= round(avg_age) - 10)
+        kpi2.metric(label="Married Count 💍", value= int(count_married), delta= - 10 + count_married)
+        kpi3.metric(label="A/C Balance ＄", value= f"$ {round(balance,2)} ", delta= - round(balance/count_married) * 100)
 
-st.markdown("## Chart Layout")
+        # create two columns for charts 
 
-chart1, chart2 = st.beta_columns(2)
+        fig_col1, fig_col2 = st.columns(2)
+        with fig_col1:
+            st.markdown("### First Chart")
+            fig = px.density_heatmap(data_frame=df, y = 'age_new', x = 'marital')
+            st.write(fig)
+        with fig_col2:
+            st.markdown("### Second Chart")
+            fig2 = px.histogram(data_frame = df, x = 'age_new')
+            st.write(fig2)
+        st.markdown("### Detailed Data View")
+        st.dataframe(df)
+        time.sleep(1)
+    #placeholder.empty()
 
-with chart1:
-    chart_data = pd.DataFrame(np.random.randn(20, 3),columns=['a', 'b', 'c'])
-    st.line_chart(chart_data)
-
-with chart2:
-    chart_data = pd.DataFrame(np.random.randn(2000, 3),columns=['a', 'b', 'c'])
-    st.line_chart(chart_data)
