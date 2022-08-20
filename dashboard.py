@@ -1,8 +1,12 @@
 import numpy as np # np mean, np random 
 import pandas as pd # read csv, df manipulation
 import time # to simulate a real time data, time loop 
-import plotly.express as px # interactive chart
+import plotly.express as px
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
+import matplotlib.pyplot as plt
 import streamlit as st # web development
+
 
 
 # read csv from a github repo
