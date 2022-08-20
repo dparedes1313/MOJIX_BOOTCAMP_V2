@@ -1,74 +1,79 @@
-import streamlit as st # web development
-import numpy as np # np mean, np random 
-import pandas as pd # read csv, df manipulation
-import time # to simulate a real time data, time loop 
-import plotly.express as px # interactive charts33
+import streamlit as st
+import pandas as pd
+import plotly.express as px
 
 
 
-# read csv from a github repo
-df = pd.read_csv("https://raw.githubusercontent.com/Lexie88rus/bank-marketing-analysis/master/bank.csv")
+st.set_page_config(page_title="Inventory Discrepancy", page_icon=":bar_chart:", layout="wide")
 
 
-st.set_page_config(
-    page_title = 'Real-Time Data Science Dashboard',
-    page_icon = '✅',
-    layout = 'wide'
-)
-
-# dashboard title
-
-st.title("Real-Time / Live Data Science Dashboard")
-
-# top-level filters 
-
-job_filter = st.selectbox("Select the Job", pd.unique(df['job']))
+df = pd.read_csv('inventory_discrepancy_cleaned.csv', index_col=0)
 
 
-# creating a single-element container.
-placeholder = st.empty()
 
-# dataframe filter 
+st.sidebar.header("You can filter here:")
 
-df = df[df['job']==job_filter]
+Category = st.sidebar.multiselect("Select the product category:",
+                                   options= df['Retail_Product_Level1Name'].unique(),
+                                   default= df['Retail_Product_Level1Name'].unique())
 
-# near real-time / live feed simulation 
 
-for seconds in range(200):
-#while True: 
-    
-    df['age_new'] = df['age'] * np.random.choice(range(1,5))
-    df['balance_new'] = df['balance'] * np.random.choice(range(1,5))
+df_selection = df.query("Retail_Product_Level1Name == @Category")
 
-    # creating KPIs 
-    avg_age = np.mean(df['age_new']) 
+st.dataframe(df_selection)
 
-    count_married = int(df[(df["marital"]=='married')]['marital'].count() + np.random.choice(range(1,30)))
-    
-    balance = np.mean(df['balance_new'])
+### Main Page
 
-    with placeholder.container():
-        # create three columns
-        kpi1, kpi2, kpi3 = st.columns(3)
+st.title(":bar_chart: Inventory Discrepancy")
+st.markdown("##")
 
-        # fill in those three columns with respective metrics or KPIs 
-        kpi1.metric(label="Age ⏳", value=round(avg_age), delta= round(avg_age) - 10)
-        kpi2.metric(label="Married Count 💍", value= int(count_married), delta= - 10 + count_married)
-        kpi3.metric(label="A/C Balance ＄", value= f"$ {round(balance,2)} ", delta= - round(balance/count_married) * 100)
+### TOP
 
-        # create two columns for charts 
+total_unders = int(df_selection['unders'].sum())
+average_unders = round(df_selection['unders'].mean(), 1)
 
-        fig_col1, fig_col2 = st.columns(2)
-        with fig_col1:
-            st.markdown("### First Chart")
-            fig = px.density_heatmap(data_frame=df, y = 'age_new', x = 'marital')
-            st.write(fig)
-        with fig_col2:
-            st.markdown("### Second Chart")
-            fig2 = px.histogram(data_frame = df, x = 'age_new')
-            st.write(fig2)
-        st.markdown("### Detailed Data View")
-        st.dataframe(df)
-        time.sleep(1)
-    #placeholder.empty()
+left_column, right_column = st.columns(2)
 
+with left_column:
+    st.subheader("Total Unders")
+    st.subheader(f"{total_unders}")
+with right_column:
+    st.subheader("Average Unders")
+    st.subheader(f"{average_unders}")
+
+st.markdown("---")
+
+### BAR CHARTS
+unders_by_category = (df_selection.groupby(by=['Retail_Product_Level1Name']).sum()[['unders']].sort_values('unders'))
+
+fig_category = px.bar(unders_by_category, x=unders_by_category.index, y='unders', 
+                            title='Total unders per category', template = 'plotly_white',
+                            color_discrete_sequence=["#0083b8"] * len(unders_by_category))
+
+fig_category.update_layout(plot_bgcolor="rgba(0,0,0,0)", xaxis=(dict(showgrid=False)))
+
+
+
+unders_by_product_name = df_selection.groupby(by=['Retail_Product_Name']).sum()[['unders']].nlargest(30, ['unders']).sort_values('unders', ascending=True)
+
+fig_product_name = px.bar(unders_by_product_name, x='unders', y=unders_by_product_name.index, 
+                            orientation='h', title='Top 30 Products', template = 'plotly_white',
+                            color_discrete_sequence=["#0083b8"] * len(unders_by_category))
+
+fig_product_name.update_layout(plot_bgcolor="rgba(0,0,0,0)", xaxis=(dict(showgrid=False)))
+
+
+left_column, right_column = st.columns(2)
+left_column.plotly_chart(fig_category, use_container_width=True)
+right_column.plotly_chart(fig_product_name, use_container_width=True)
+
+
+# HIDE STREAMLIT STYLE
+hide_st_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            header {visibility: hidden;}
+            </style>
+            """
+st.markdown(hide_st_style, unsafe_allow_html=True)
