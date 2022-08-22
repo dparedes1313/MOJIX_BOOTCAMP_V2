@@ -135,7 +135,3 @@ if len(uploaded_files) == 2:
 
 else:
     st.warning('Some CSV file is missing, please review it.')
-
-    # Bar Chart CC
-st.write('RETAIL')
-st.line_chart(df_merged['df_merged'])
