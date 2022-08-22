@@ -3,7 +3,7 @@ import streamlit as st
 import pandas as pd
 import time
 
-st.title('Discrepancy Data - Analysis')
+st.title('Discrepancy Data  Analysis')
 
 with st.sidebar:
     uploaded_files = st.file_uploader('UPLOAD EXPECTED AND COUNTED FILES:', type='csv', accept_multiple_files=True, help='upload CSV files with Expected and Counted names')
