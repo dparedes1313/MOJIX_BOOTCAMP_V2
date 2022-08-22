@@ -6,7 +6,7 @@ import time
 st.title('Discrepancy Data  Analysis')
 
 with st.sidebar:
-    uploaded_files = st.file_uploader('UPLOAD EXPECTED AND COUNTED FILES:', type='csv', accept_multiple_files=True, help='upload CSV files with Expected and Counted names')
+    uploaded_files = st.file_uploader('UPLOAD EXPECTED AND COUNTED FILES TOGHETER:', type='csv', accept_multiple_files=True, help='upload CSV files with Expected and Counted names')
 
 if len(uploaded_files) == 2:
     for file in uploaded_files:
