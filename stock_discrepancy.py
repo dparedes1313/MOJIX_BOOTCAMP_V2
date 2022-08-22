@@ -135,3 +135,7 @@ if len(uploaded_files) == 2:
 
 else:
     st.warning('Some CSV file is missing, please review it.')
+
+    # Bar Chart CC
+st.write('Retail_CCQTY')
+st.line_chart(df_result['Retail_CCQTY'])
