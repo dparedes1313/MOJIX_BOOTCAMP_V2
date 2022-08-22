@@ -6,7 +6,7 @@ import time
 st.title('Stock/Inventory Discrepancy')
 
 with st.sidebar:
-    uploaded_files = st.file_uploader('CHOOSE EXPECTED AND COUNTED FILES:', type='csv', accept_multiple_files=True, help='Make sure that both files contains the words "expected" and "counted" in filenames.')
+    uploaded_files = st.file_uploader('UPLOAD EXPECTED AND COUNTED FILES:', type='csv', accept_multiple_files=True, help='upload CSV files with Expected and Counted names')
 
 if len(uploaded_files) == 2:
     for file in uploaded_files:
