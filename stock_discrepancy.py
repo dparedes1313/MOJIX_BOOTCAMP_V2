@@ -127,7 +127,7 @@ if len(uploaded_files) == 2:
     timestr = time.strftime('%Y%m%d-%H%M%S')
 
     st.download_button(
-        label='Download data as CSV',
+        label='Download  CSV',
         data=csv,
         file_name='discrepancy_'+timestr+'.csv',
         mime='text/csv'
