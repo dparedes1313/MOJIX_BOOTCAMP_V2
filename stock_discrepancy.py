@@ -137,5 +137,5 @@ else:
     st.warning('Some CSV file is missing, please review it.')
 
     # Bar Chart CC
-st.write('Retail_CCQTY')
-st.line_chart(df_result['Retail_CCQTY'])
+st.write('df_merged')
+st.line_chart(df_result['df_merged'])
